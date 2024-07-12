@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Death Certificate Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-container, .certificate-container {
+            width: 80%;
+            max-width: 800px;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .form-container h2, .certificate-header h2 {
+            margin: 0 0 20px;
+            color: #333;
+        }
+        .form-container form {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-container label, .form-container input {
+            margin: 5px 0;
+            font-size: 1em;
+            color: #333;
+        }
+        .form-container input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-container button {
+            padding: 10px;
+            border: none;
+            background: #28a745;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .form-container button:hover {
+            background: #218838;
+        }
+        .certificate-header, .certificate-content, .footer {
+            text-align: center;
+        }
+        .certificate-content p, .footer p {
+            margin: 10px 0;
+            color: #333;
+        }
+        .certificate-content span {
+            font-weight: bold;
+        }
+        .qr-code {
+            margin-top: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Death Certificate Form</h2>
+    <form id="certificateForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required>
+        
+        <label for="dateOfDeath">Date of Death:</label>
+        <input type="date" id="dateOfDeath" required>
+        
+        <label for="placeOfDeath">Place of Death:</label>
+        <input type="text" id="placeOfDeath" required>
+        
+        <label for="motherAadhar">Mother's Aadhaar No.:</label>
+        <input type="text" id="motherAadhar" required>
+        
+        <label for="fatherAadhar">Father's Aadhaar No.:</label>
+        <input type="text" id="fatherAadhar" required>
+        
+        <label for="address">Permanent Address:</label>
+        <input type="text" id="address" required>
+        
+        <label for="registrationNo">Registration Number:</label>
+        <input type="text" id="registrationNo" required>
+        
+        <label for="dateOfIssue">Date of Issue:</label>
+        <input type="date" id="dateOfIssue" required>
+        
+        <button type="submit">Generate Certificate</button>
+    </form>
+</div>
+
+<div class="certificate-container hidden" id="certificateContainer">
+    <div class="certificate-header">
+        <h2>Death Certificate</h2>
+        <p>Government of Maharashtra</p>
+        <p>Municipal Corporation Sambhajinagar</p>
+    </div>
+    <div class="certificate-content">
+        <p>Name: <span id="certName"></span></p>
+        <p>Date of Death: <span id="certDateOfDeath"></span></p>
+        <p>Place of Death: <span id="certPlaceOfDeath"></span></p>
+        <p>Mother's Aadhaar No.: <span id="certMotherAadhar"></span></p>
+        <p>Father's Aadhaar No.: <span id="certFatherAadhar"></span></p>
+        <p>Permanent Address of Deceased: <span id="certAddress"></span></p>
+        <p>Registration Number: <span id="certRegistrationNo"></span></p>
+        <p>Date of Issue: <span id="certDateOfIssue"></span></p>
+        <div class="qr-code">
+            <img src="path/to/your/qr-code.png" alt="QR Code">
+        </div>
+    </div>
+    <div class="footer">
+        <p>This is a computer-generated certificate.</p>
+        <p>Registrar (Birth & Death), Municipal Corporation Sambhajinagar</p>
+    </div>
+</div>
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwgdF6Zc1-MmkFEAcc64oEil4s-43WLgYYN3I4AMQmNhHHHReiX22gUk09XylLbj63L0g/exec'; 
+    const form = document.getElementById('certificateForm');
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        // Get form values
+        const name = document.getElementById('name').value;
+        const dateOfDeath = document.getElementById('dateOfDeath').value;
+        const placeOfDeath = document.getElementById('placeOfDeath').value;
+        const motherAadhar = document.getElementById('motherAadhar').value;
+        const fatherAadhar = document.getElementById('fatherAadhar').value;
+        const address = document.getElementById('address').value;
+        const registrationNo = document.getElementById('registrationNo').value;
+        const dateOfIssue = document.getElementById('dateOfIssue').value;
+        
+        // Prepare data for submission
+        const data = {
+            Name: name,
+            Date_of_Death: dateOfDeath,
+            Place_of_Death: placeOfDeath,
+            Mothers_Aadhaar_No: motherAadhar,
+            Fathers_Aadhaar_No: fatherAadhar,
+            Permanent_Address: address,
+            Registration_Number: registrationNo,
+            Date_of_Issue: dateOfIssue
+        };
+
+        // Submit data to Google Script
+        fetch(scriptURL, {
+            method: 'POST',
+            body: new URLSearchParams(data)
+        })
+        .then(response => response.json())
+        .then(responseData => {
+            if (responseData.status === 'Success') {
+                // Set certificate values
+                document.getElementById('certName').innerText = data.Name;
+                document.getElementById('certDateOfDeath').innerText = data.Date_of_Death;
+                document.getElementById('certPlaceOfDeath').innerText = data.Place_of_Death;
+                document.getElementById('certMotherAadhar').innerText = data.Mothers_Aadhaar_No;
+                document.getElementById('certFatherAadhar').innerText = data.Fathers_Aadhaar_No;
+                document.getElementById('certAddress').innerText = data.Permanent_Address;
+                document.getElementById('certRegistrationNo').innerText = data.Registration_Number;
+                document.getElementById('certDateOfIssue').innerText = data.Date_of_Issue;
+                
+                // Show certificate and hide form
+                document.getElementById('certificateContainer').classList.remove('hidden');
+                document.getElementById('certificateForm').classList.add('hidden');
+            } else {
+                alert('Error: ' + responseData.message);
+            }
+        })
+        .catch(error => {
+            alert('Error: ' + error.message);
+        });
+    });
+</script>
+
+</body>
+</html>
